@@ -27,6 +27,7 @@ class Line:
 
         self._populate_verticals()
         self._populate_horizontals()
+        self._populate_diagnoals()
 
     def _populate_verticals(self):
         if self.st_point.x != self.end_point.x:
@@ -53,6 +54,26 @@ class Line:
                 Point(
                     x=dx,
                     y=self.st_point.y,
+                )
+            )
+
+    def _populate_diagnoals(self):
+        first_p = self.st_point if self.st_point.x < self.end_point.x else self.end_point
+        second_p = self.end_point if first_p == self.st_point else self.st_point
+
+        if abs(first_p.y - second_p.y) != abs(first_p.x - second_p.x):
+            return
+
+        diff = second_p.y - first_p.y
+        if diff < 0:
+            rg = range(0, diff - 1, -1)
+        else:
+            rg = range(0, diff + 1)
+        for d in rg:
+            self.cover_points.append(
+                Point(
+                    x=first_p.x + abs(d),
+                    y=first_p.y + d,
                 )
             )
 
@@ -103,6 +124,7 @@ def read_coords(input_file: str) -> Tuple[List[Line], int, int]:
 
 
 def main(input_file: str) -> None:
+    #  lines, max_x, max_y = read_coords(input_file=input_file)
     lines, _, _ = read_coords(input_file=input_file)
     covers = defaultdict(int)
     counts = 0
