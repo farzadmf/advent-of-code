@@ -17,9 +17,13 @@ def calc_fuel(values: List[int]) -> Dict[int, int]:
     fuel = defaultdict(int)
     for pos in range(max_pos):
         for val in values:
-            fuel[pos] += abs(val - pos)
+            fuel[pos] += get_cost(abs(val - pos))
 
     return fuel
+
+
+def get_cost(diff: int) -> int:
+    return diff * (diff + 1) // 2
 
 
 def main(input_file: str) -> None:
