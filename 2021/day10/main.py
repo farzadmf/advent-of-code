@@ -17,11 +17,18 @@ reverse_pairs = {
     "[": "]",
 }
 
-points = {
+error_points = {
     "}": 1197,
     ">": 25137,
     ")": 3,
     "]": 57,
+}
+
+completion_points = {
+    "}": 3,
+    ">": 4,
+    ")": 1,
+    "]": 2,
 }
 
 
@@ -47,6 +54,7 @@ class Chunk:
         self.valid = True
         self.incomplete = False
         self.illegal = ""
+        self.remain = ""
 
         self._set_valid()
 
@@ -64,6 +72,20 @@ class Chunk:
                     stack.pop()
         if self.valid:
             self.incomplete = len(stack) != 0
+        if self.incomplete:
+            self.remain = "".join(stack)
+
+    @property
+    def error_point(self):
+        return 0 if self.valid else error_points[self.illegal]
+
+    @property
+    def completion_point(self):
+        points = 0
+        for c in self.remain[::-1]:
+            points = (points * 5) + completion_points[reverse_pairs[c]]
+
+        return points
 
     def __str__(self) -> str:
         return f"{self.line} -> incomp? {self.incomplete} | valid? {self.valid}"
@@ -71,22 +93,37 @@ class Chunk:
 
 class Navigation:
     def __init__(self, lines: List[str]):
-        self.lines = lines
-        self.chunks: List[Chunk] = []
-        self.corrupts: List[Chunk] = []
-        self.incompletes: List[Chunk] = []
-        self.syntax_error = 0
+        self._lines = lines
+        self._chunks: List[Chunk] = []
+        self._corrupts: List[Chunk] = []
+        self._incompletes: List[Chunk] = []
+        self._completion_points: List[int] = []
+
+        self.completion_points_val = 0
+        self.error_points = 0
 
         self._init_chunks()
+        self._calc_error_points()
+        self._calc_completion_points()
 
     def _init_chunks(self):
-        for line in self.lines:
+        for line in self._lines:
             c = Chunk(line)
             if not c.valid:
-                self.corrupts.append(c)
-                self.syntax_error += points[c.illegal]
+                self._corrupts.append(c)
             elif c.incomplete:
-                self.incompletes.append(c)
+                self._incompletes.append(c)
+
+    def _calc_error_points(self):
+        for c in self._corrupts:
+            self.error_points += c.error_point
+
+    def _calc_completion_points(self):
+        for c in self._incompletes:
+            self._completion_points.append(c.completion_point)
+
+        n = len(self._completion_points)
+        self.completion_points_val = sorted(self._completion_points)[n // 2]
 
 
 def assert_corrupts(lines: List[str]) -> None:
@@ -104,7 +141,8 @@ def main(input_file: str) -> None:
     #  assert_corrupts(lines)
 
     nav = Navigation(lines)
-    print(nav.syntax_error)
+    #  print(nav.error_points)
+    print(nav.completion_points_val)
 
 
 if __name__ == "__main__":
