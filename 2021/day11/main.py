@@ -18,6 +18,7 @@ class Oct:
         self._flashing: Deque[Cell] = deque()
         self._flashed: Set[Cell] = set()
         self.flashes = 0
+        self.synched = False
 
         self._init_grid(lines)
 
@@ -44,6 +45,8 @@ class Oct:
         for (r, c) in self._flashed:
             self._grid[r][c] = 0
             self.flashes += 1
+        if len(self._flashed) == self._rows * self._cols:
+            self.synched = True
 
     def _flash(self):
         while self._flashing:
@@ -114,15 +117,24 @@ def assert_sample():
     print(octup.flashes)
 
 
-def main(input_file: str) -> None:
+def main(input_file: str, steps: int) -> None:
     #  assert_sample()
 
     lines = read_input(input_file)
     octup = Oct(lines)
-    for _ in range(100):
+
+    # Part 1
+    #  for _ in range(steps):
+    #      octup.do_step()
+    #  print(octup.flashes)
+
+    # Part 2
+    step = 0
+    while not octup.synched:
+        step += 1
         octup.do_step()
-    print(octup.flashes)
+    print(step)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1], int(sys.argv[2]) if len(sys.argv) > 2 else 0)
