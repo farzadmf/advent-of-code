@@ -16,35 +16,35 @@ class Graph:
             self._connections[s].append(d)
             self._connections[d].append(s)
 
-    def traverse(self) -> List[List[str]]:
-        def dfs(
-            cave: str,
-            visited: Set[str],
-            cur_path: List[str],
-            all_paths: List[List[str]],
-        ) -> None:
-            if cave in visited:
-                return
-            if cave == "end":
-                all_paths.append(cur_path + ["end"])
-                return
-            for neigh in self._connections[cave]:
-                dfs(
+    def traverse(
+        self,
+        cave: str,
+        visited: Set[str],
+        second_small_allowed: bool,
+    ) -> int:
+        if cave == "end":
+            return 1
+        count = 0
+        for neigh in self._connections[cave]:
+            if neigh.isupper():
+                count += self.traverse(
                     cave=neigh,
-                    visited=visited | {cave} if cave.islower() else visited,
-                    cur_path=cur_path + [cave],
-                    all_paths=all_paths,
+                    visited=visited,
+                    second_small_allowed=second_small_allowed,
                 )
-
-        all_paths = []
-        dfs(
-            cave="start",
-            visited=set(),
-            cur_path=[],
-            all_paths=all_paths,
-        )
-
-        return all_paths
+            elif neigh not in visited:
+                count += self.traverse(
+                    cave=neigh,
+                    visited=visited | {neigh},
+                    second_small_allowed=second_small_allowed,
+                )
+            elif second_small_allowed and neigh != "start":
+                count += self.traverse(
+                    cave=neigh,
+                    visited=visited,
+                    second_small_allowed=False,
+                )
+        return count
 
 
 def read_input(input_file: str) -> List[str]:
@@ -52,23 +52,45 @@ def read_input(input_file: str) -> List[str]:
         return f.read().splitlines()
 
 
-def assert_input_part1(input_file: str, count: int) -> None:
+def assert_input_part(
+    input_file: str,
+    count: int,
+    second_small_allowed: bool,
+) -> None:
     lines = read_input(input_file)
     graph = Graph(lines)
-    paths = graph.traverse()
-    assert len(paths) == count, f"count of {input_file} is {len(paths)} instead of {count}"
+    paths = graph.traverse(
+        cave="start",
+        visited=set(["start"]),
+        second_small_allowed=second_small_allowed,
+    )
+    assert paths == count, f"count of {input_file} is {paths} instead of {count}"
 
 
 def main() -> None:
-    assert_input_part1("input_tiny", 10)
-    assert_input_part1("input_small", 19)
-    assert_input_part1("input_medium", 226)
+    assert_input_part("input_tiny", 10, False)
+    assert_input_part("input_small", 19, False)
+    assert_input_part("input_medium", 226, False)
+
+    assert_input_part("input_tiny", 36, True)
+    assert_input_part("input_small", 103, True)
+    assert_input_part("input_medium", 3509, True)
 
     # Help for part 1 from here: https://git.io/JDW4B
     lines = read_input("input")
     graph = Graph(lines)
-    paths = graph.traverse()
-    print(len(paths))
+    paths1 = graph.traverse(
+        cave="start",
+        visited=set(["start"]),
+        second_small_allowed=False,
+    )
+    paths2 = graph.traverse(
+        cave="start",
+        visited=set(["start"]),
+        second_small_allowed=True,
+    )
+    print(f"Part 1: {paths1}")
+    print(f"Part 2: {paths2}")
 
 
 if __name__ == "__main__":
