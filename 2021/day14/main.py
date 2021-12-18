@@ -71,4 +71,5 @@ def main(input_file: str, steps: int) -> None:
 
 
 if __name__ == "__main__":
+    # https://git.io/JDrKA
     main(sys.argv[1], int(sys.argv[2]))
