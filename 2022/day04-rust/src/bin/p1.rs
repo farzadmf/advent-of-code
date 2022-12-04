@@ -12,5 +12,6 @@ fn main() {
         .sum::<u32>();
 
     println!("result {}", result);
+
     println!("------------------- PART 1 -------------------");
 }
