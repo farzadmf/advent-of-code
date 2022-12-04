@@ -4,15 +4,13 @@ pub fn read_input(input: String) -> String {
     fs::read_to_string(input).unwrap().trim().to_string()
 }
 
-pub fn get_code(ch: &char) -> u32 {
-    let a_value = 'a' as u32;
-    let big_a_value = 'A' as u32;
-    let c_value = *ch as u32;
-
-    match ch {
-        'a'..='z' => c_value - a_value + 1,
-        'A'..='Z' => c_value - big_a_value + 27,
-        _ => panic!("unexpected char {}", ch),
+pub fn get_code(ch: char) -> Option<u32> {
+    if !ch.is_alphabetic() {
+        None
+    } else if ch.is_lowercase() {
+        Some((ch as u32) - ('a' as u32) + 1)
+    } else {
+        Some((ch as u32) - ('A' as u32) + 27)
     }
 }
 

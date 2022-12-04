@@ -14,7 +14,7 @@ fn main() {
             let second_chars: HashSet<char> = second.chars().collect();
 
             let shared = first_chars.intersection(&second_chars).nth(0).unwrap();
-            get_code(shared)
+            get_code(*shared).unwrap()
         })
         .sum();
 
