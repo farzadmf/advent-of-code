@@ -5,6 +5,9 @@ local day=$1
 
 local padded_day=$( python -c "print('$day'.zfill(2), end=None)" )
 local folder="day${padded_day}-rust"
+
+gum confirm "folder '$folder' exists, continue?" --default=No || return 0
+
 \rm -rf $folder
 cargo init --lib $folder
 echo "Created new Rust project in $folder ..."
