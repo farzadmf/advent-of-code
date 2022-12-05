@@ -26,6 +26,7 @@ else
 fi
 
 
+cat /dev/null > $folder/src/lib.rs
 mkdir -p $folder/src/bin
 for p in {1..2}; do
   cat <<EOF >$folder/src/bin/p${p}.rs
