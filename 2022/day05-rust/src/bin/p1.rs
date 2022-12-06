@@ -1,4 +1,6 @@
-use day05_rust::{read_input, Crate};
+use std::collections::VecDeque;
+
+use day05_rust::{get_stack_count, read_input, Crate, Move};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
@@ -7,14 +9,25 @@ fn main() {
     // Let's do this!
     let input = read_input("input_small");
 
-    let (stacks, moves): (Vec<_>, Vec<_>) =
+    let (stack_lines, move_lines): (Vec<_>, Vec<_>) =
         input.lines().partition(|l| !l.to_string().contains("move"));
 
-    stacks
-        .into_iter()
-        .for_each(|line| {
-            line.chars().into::<Vec<char>>().un
-        })
+    let stack_count = get_stack_count(&input[..]);
+    let stacks: Vec<VecDeque<Crate>> = Vec::new();
+
+    for line in stack_lines.as_slice()[..stack_lines.len() - 2].to_vec() {
+        let crates = Crate::from_line(line);
+        println!("{:?}", crates);
+    }
+
+    let moves = Move::from_lines(move_lines);
+    // stacks.into_iter().for_each(|line| {
+    //     let crates = Crate::from_line(line);
+
+    //     for c in crates {
+    //         dbg!(c);
+    //     }
+    // });
 
     // input
     //     .lines()
