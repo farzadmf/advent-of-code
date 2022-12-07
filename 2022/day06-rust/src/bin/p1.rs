@@ -1,4 +1,4 @@
-use day06_rust::{get_packet_start, read_input};
+use day06_rust::{get_start, read_input};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
@@ -6,7 +6,7 @@ fn main() {
     let input = read_input("input");
 
     input.lines().for_each(|line| {
-        let start = get_packet_start(line);
+        let start = get_start(line, 4);
         println!("got {}", start);
     });
 
