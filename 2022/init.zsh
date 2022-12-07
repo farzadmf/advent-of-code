@@ -6,7 +6,9 @@ local day=$1
 local padded_day=$( python -c "print('$day'.zfill(2), end=None)" )
 local folder="day${padded_day}-rust"
 
-gum confirm "folder '$folder' exists, continue?" --default=No || return 0
+if [[ -d $folder ]]; then
+  gum confirm "folder '$folder' exists, continue?" --default=No || return 0
+fi
 
 \rm -rf $folder
 cargo init --lib $folder
