@@ -24,9 +24,8 @@ if [[ -n $existing_envrc ]]; then
 else
   echo 'creating new .envrc ...'
   cp envrc_template $folder/.envrc
-  direnv allow $folder/.envrc
 fi
-
+direnv allow $folder/.envrc
 
 cat /dev/null > $folder/src/lib.rs
 mkdir -p $folder/src/bin
