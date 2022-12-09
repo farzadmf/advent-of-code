@@ -3,7 +3,7 @@ use day08_rust::read_input;
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
 
-    let input = read_input("input_small");
+    let input = read_input("input");
 
     let rows = input.lines().collect::<Vec<_>>().len();
     let cols = input.lines().nth(0).unwrap().len();
@@ -40,8 +40,8 @@ fn main() {
 
             let left = &row[..c];
             let right = &row[c + 1..];
-            let up = &columns[r][..c];
-            let down = &columns[r][c + 1..];
+            let up = &columns[c][..r];
+            let down = &columns[c][r + 1..];
 
             let left_max = left.iter().max().unwrap();
             let right_max = right.iter().max().unwrap();
