@@ -28,7 +28,7 @@ impl FromStr for Direction {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Position {
     pub x: usize,
     pub y: usize,
@@ -43,7 +43,10 @@ impl Position {
     }
 
     pub fn right(&mut self) -> &mut Self {
+        print!("in right first {:?}", self.x);
         self.x += 1;
+        print!(" | in right second {:?}", self.x);
+        println!();
         self
     }
 
@@ -60,7 +63,7 @@ impl Position {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Knot {
     pub position: Position,
 }
@@ -75,37 +78,39 @@ impl Knot {
         }
     }
 
-    pub fn follow(&mut self, head: &Knot) {
-        let y_diff = self.position.y.abs_diff(head.position.y);
-        let x_diff = self.position.x.abs_diff(head.position.x);
+    pub fn follow(&mut self, other: &Knot) {
+        let y_diff = self.position.y.abs_diff(other.position.y);
+        let x_diff = self.position.x.abs_diff(other.position.x);
 
-        let head_is_left = head.position.x < self.position.x;
-        let head_is_up = head.position.y > self.position.y;
+        let other_is_left = other.position.x < self.position.x;
+        let other_is_up = other.position.y > self.position.y;
 
         if x_diff <= 1 && y_diff <= 1 {
             return;
         }
 
+        println!("x_diff: {:?}, ydiff: {:?}", x_diff, y_diff);
+
         if x_diff >= 2 && y_diff == 0 {
-            if head_is_left {
+            if other_is_left {
                 self.position.left();
             } else {
                 self.position.right();
             }
         } else if y_diff >= 2 && x_diff == 0 {
-            if head_is_up {
+            if other_is_up {
                 self.position.up();
             } else {
                 self.position.down();
             }
         } else {
-            if head_is_left && head_is_up {
+            if other_is_left && other_is_up {
                 // left up
                 self.position.up().left();
-            } else if head_is_up {
+            } else if other_is_up {
                 // right up
                 self.position.up().right();
-            } else if head_is_left {
+            } else if other_is_left {
                 // left down
                 self.position.down().left();
             } else {
