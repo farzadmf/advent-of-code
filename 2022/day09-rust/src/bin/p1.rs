@@ -1,10 +1,12 @@
-use day09_rust::{read_input, Direction, Head, Instruction, Position, Tail};
+use std::collections::HashSet;
+
+use day09_rust::{display_grid, read_input, Direction, Head, Instruction, Position, Tail};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
-    let result = 0;
 
-    let input = read_input("input_small");
+    let input = read_input("input");
+    let mut tail_path: HashSet<(usize, usize)> = HashSet::new();
 
     let instructions: Vec<Instruction> = input
         .lines()
@@ -19,26 +21,31 @@ fn main() {
         })
         .collect::<Vec<_>>();
 
+    // NOTE: trick is to NOT start from (0, 0)!!!
     let mut head = Head {
-        position: Position { x: 0, y: 0 },
+        position: Position { x: 1000, y: 1000 },
     };
     let mut tail = Tail {
-        position: Position { x: 0, y: 0 },
+        position: Position { x: 1000, y: 1000 },
     };
 
+    // display_grid(&head, &tail);
+    tail_path.insert((tail.position.x, tail.position.y));
     for i in &instructions {
-        println!("instruction: {:?}", i);
+        // println!("instruction: {:?}", i);
 
         for _ in 0..i.count {
             head.go(&i.direction);
             tail.follow(&head);
+            tail_path.insert((tail.position.x, tail.position.y));
 
-            println!("\thead {:?} | tail {:?}", head.position, tail.position);
+            // display_grid(&head, &tail);
+            // println!("\thead {:?} | tail {:?}", head.position, tail.position);
         }
 
-        println!();
+        // println!();
     }
 
-    println!("result: {}", result);
+    println!("result: {:?}", tail_path.len());
     println!("------------------- PART 1 -------------------");
 }
