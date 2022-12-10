@@ -1,31 +1,19 @@
 use std::collections::HashSet;
 
-use day09_rust::{display_grid, read_input, Direction, Head, Instruction, Position, Tail};
+use day09_rust::{get_instructions, Knot, Position};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
 
-    let input = read_input("input");
     let mut tail_path: HashSet<(usize, usize)> = HashSet::new();
 
-    let instructions: Vec<Instruction> = input
-        .lines()
-        .map(|line| Instruction {
-            direction: line.parse::<Direction>().unwrap(),
-            count: line
-                .split_whitespace()
-                .nth(1)
-                .unwrap()
-                .parse::<usize>()
-                .unwrap(),
-        })
-        .collect::<Vec<_>>();
+    let instructions = get_instructions("input");
 
     // NOTE: trick is to NOT start from (0, 0)!!!
-    let mut head = Head {
+    let mut head = Knot {
         position: Position { x: 1000, y: 1000 },
     };
-    let mut tail = Tail {
+    let mut tail = Knot {
         position: Position { x: 1000, y: 1000 },
     };
 

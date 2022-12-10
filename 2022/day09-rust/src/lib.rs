@@ -61,27 +61,11 @@ impl Position {
 }
 
 #[derive(Debug)]
-pub struct Head {
+pub struct Knot {
     pub position: Position,
 }
 
-impl Head {
-    pub fn go(&mut self, direction: &Direction) {
-        match direction {
-            Direction::Up => self.position.y += 1,
-            Direction::Down => self.position.y -= 1,
-            Direction::Left => self.position.x -= 1,
-            Direction::Right => self.position.x += 1,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct Tail {
-    pub position: Position,
-}
-
-impl Tail {
+impl Knot {
     pub fn go(&mut self, direction: &Direction) {
         match direction {
             Direction::Up => self.position.y += 1,
@@ -91,7 +75,7 @@ impl Tail {
         }
     }
 
-    pub fn follow(&mut self, head: &Head) {
+    pub fn follow(&mut self, head: &Knot) {
         let y_diff = self.position.y.abs_diff(head.position.y);
         let x_diff = self.position.x.abs_diff(head.position.x);
 
@@ -136,7 +120,24 @@ pub fn read_input(path: &str) -> String {
     fs::read_to_string(path).unwrap()
 }
 
-pub fn display_grid(head: &Head, tail: &Tail) {
+pub fn get_instructions(path: &str) -> Vec<Instruction> {
+    let input = read_input(path);
+
+    input
+        .lines()
+        .map(|line| Instruction {
+            direction: line.parse::<Direction>().unwrap(),
+            count: line
+                .split_whitespace()
+                .nth(1)
+                .unwrap()
+                .parse::<usize>()
+                .unwrap(),
+        })
+        .collect::<Vec<_>>()
+}
+
+pub fn display_grid(head: &Knot, tail: &Knot) {
     let rows = 5;
     let cols = 6;
 
