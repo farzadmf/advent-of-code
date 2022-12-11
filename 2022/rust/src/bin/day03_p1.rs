@@ -1,9 +1,9 @@
-use day03_rust::{get_code, read_input};
+use rust::day03::{get_code, read_input};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
 
-    let input = read_input("input".to_string());
+    let input = read_input("input/day03".to_string());
 
     // From here: https://bit.ly/3F3fv3R
     let result = input

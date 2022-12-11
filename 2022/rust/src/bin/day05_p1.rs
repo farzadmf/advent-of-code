@@ -1,13 +1,13 @@
 use std::collections::VecDeque;
 
-use day05_rust::{get_stack_count, read_input, Crate, Move};
+use rust::day05::{get_stack_count, read_input, Crate, Move};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
     let result = 0;
 
     // Let's do this!
-    let input = read_input("input_small");
+    let input = read_input("input/day05_small");
 
     let (stack_lines, move_lines): (Vec<_>, Vec<_>) =
         input.lines().partition(|l| !l.to_string().contains("move"));

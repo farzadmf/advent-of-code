@@ -1,8 +1,9 @@
-use day08_rust::read_input;
+use rust::day08::read_input;
 
 fn main() {
     println!("+++++++++++++++++++ PART 2 +++++++++++++++++++");
-    let input = read_input("input");
+
+    let input = read_input("input/day08");
 
     let rows = input.lines().collect::<Vec<_>>().len();
     let cols = input.lines().nth(0).unwrap().len();

@@ -1,9 +1,9 @@
-use day10_rust::get_operations;
+use rust::day10::get_operations;
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
 
-    let ops = get_operations("input");
+    let ops = get_operations("input/day10");
 
     let mut add_started = false;
     let mut cur_cycle = 1;

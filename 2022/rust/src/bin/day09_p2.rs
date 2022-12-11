@@ -1,10 +1,10 @@
-use day09_rust::{get_instructions, Knot, Position};
+use rust::day09::{get_instructions, Knot, Position};
 use std::collections::HashSet;
 
 fn main() {
     println!("+++++++++++++++++++ PART 2 +++++++++++++++++++");
 
-    let instructions = get_instructions("input");
+    let instructions = get_instructions("input/day09");
     let mut tail_path: HashSet<(usize, usize)> = HashSet::new();
 
     let knot_count = 10;

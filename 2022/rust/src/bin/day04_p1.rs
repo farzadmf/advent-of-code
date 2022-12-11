@@ -1,9 +1,9 @@
-use day04_rust::{covers, get_points, read_input};
+use rust::day04::{covers, get_points, read_input};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
 
-    let input = read_input("input".to_string());
+    let input = read_input("input/day04".to_string());
 
     let result = input
         .lines()

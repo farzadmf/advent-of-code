@@ -1,4 +1,5 @@
-use day07_rust::read_input;
+use rust::day07::read_input;
+
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
     let result = 0;

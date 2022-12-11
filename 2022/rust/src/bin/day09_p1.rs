@@ -1,13 +1,13 @@
 use std::collections::HashSet;
 
-use day09_rust::{get_instructions, Knot, Position};
+use rust::day09::{get_instructions, Knot, Position};
 
 fn main() {
     println!("+++++++++++++++++++ PART 1 +++++++++++++++++++");
 
     let mut tail_path: HashSet<(usize, usize)> = HashSet::new();
 
-    let instructions = get_instructions("input");
+    let instructions = get_instructions("input/day09");
 
     // NOTE: trick is to NOT start from (0, 0)!!!
     let mut head = Knot {
