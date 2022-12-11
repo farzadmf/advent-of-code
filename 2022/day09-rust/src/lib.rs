@@ -43,10 +43,7 @@ impl Position {
     }
 
     pub fn right(&mut self) -> &mut Self {
-        print!("in right first {:?}", self.x);
         self.x += 1;
-        print!(" | in right second {:?}", self.x);
-        println!();
         self
     }
 
@@ -88,8 +85,6 @@ impl Knot {
         if x_diff <= 1 && y_diff <= 1 {
             return;
         }
-
-        println!("x_diff: {:?}, ydiff: {:?}", x_diff, y_diff);
 
         if x_diff >= 2 && y_diff == 0 {
             if other_is_left {

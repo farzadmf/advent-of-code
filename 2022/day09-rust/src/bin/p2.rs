@@ -4,10 +4,10 @@ use std::collections::HashSet;
 fn main() {
     println!("+++++++++++++++++++ PART 2 +++++++++++++++++++");
 
-    let instructions = get_instructions("input_small_p2");
+    let instructions = get_instructions("input");
     let mut tail_path: HashSet<(usize, usize)> = HashSet::new();
 
-    let knot_count = 3;
+    let knot_count = 10;
     let start = (1000, 1000);
     let mut knots: Vec<Knot> = Vec::new();
     for _ in 0..knot_count {
@@ -21,19 +21,16 @@ fn main() {
     }
 
     tail_path.insert(start);
-    for i in &instructions[..1] {
-        println!("instruction: {:?}", i);
-
+    for i in &instructions {
         for _ in 0..i.count {
             knots[0].go(&i.direction);
-            println!("    {:?}", knots[0]);
 
             for i in 1..knot_count {
-                let mut folower = knots[i];
+                // WTF Rust???
+                // - If I do `let follower = knots[i]`, it creates a copy
+                //   of that element and hence `follow` won't affect it!!!
                 let followee = knots[i - 1];
-                folower.follow(&followee);
-
-                println!("        {:?} <-- {:?}", folower, followee);
+                knots[i].follow(&followee);
             }
             tail_path.insert((
                 knots[knot_count - 1].position.x,
@@ -41,6 +38,8 @@ fn main() {
             ));
         }
     }
+
+    println!("result: {}", tail_path.len());
 
     println!("------------------- PART 2 -------------------");
 }
