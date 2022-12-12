@@ -8,6 +8,7 @@ pub enum Op {
 #[derive(Debug, Clone)]
 pub struct Monkey {
     pub false_target_idx: usize,
+    pub inspect_count: usize,
     pub items: Vec<usize>,
     pub op: Op,
     pub test_div: usize,
@@ -25,9 +26,11 @@ impl Monkey {
         self.items.append(items);
     }
 
-    pub fn do_actions(&mut self) -> MoveItems {
+    pub fn inspect(&mut self) -> MoveItems {
         let mut true_items: Vec<usize> = vec![];
         let mut false_items: Vec<usize> = vec![];
+
+        self.inspect_count += self.items.len();
 
         for idx in 0..self.items.len() {
             let mut worry_level = self.items[idx];
