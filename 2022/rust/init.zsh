@@ -5,8 +5,10 @@ local day=$1
 
 local padded_day=$( python -c "print('$day'.zfill(2), end=None)" )
 
-rg -q $padded_day src/lib.rs || echo "pub mod day${padded_day};" >> src/lib.rs
-cat /dev/null > $folder/src/day${padded_day}.rs
+local mod_str="pub mod day$padded_day;"
+local lib_file=src/lib.rs
+rg -q $mod_str $lib_file || sed -ri "$( rg 'pub mod' $lib_file | wc -l ) a $mod_str" $lib_file
+cat /dev/null > src/day${padded_day}.rs
 
 for p in {1..2}; do
   cat <<EOF >src/bin/day${padded_day}_p${p}.rs
