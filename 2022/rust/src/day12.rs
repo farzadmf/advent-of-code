@@ -7,10 +7,10 @@ pub const START: isize = -1;
 pub const END: isize = -2;
 pub const HIGHEST: isize = 'z' as isize - 'a' as isize;
 
-pub fn get_grid(path: &str) -> (Vec<Vec<isize>>, (isize, isize)) {
+pub fn get_grid(path: &str) -> Vec<Vec<isize>> {
     let input = read_input(path);
 
-    let grid = input
+    input
         .lines()
         .map(|line| {
             line.chars()
@@ -21,8 +21,10 @@ pub fn get_grid(path: &str) -> (Vec<Vec<isize>>, (isize, isize)) {
                 })
                 .collect::<Vec<_>>()
         })
-        .collect::<Vec<_>>();
+        .collect::<Vec<_>>()
+}
 
+pub fn get_start(grid: &Vec<Vec<isize>>) -> (isize, isize) {
     let (rows, cols) = (grid.len(), grid[0].len());
     let mut start = (0 as isize, 0 as isize);
 
@@ -34,7 +36,7 @@ pub fn get_grid(path: &str) -> (Vec<Vec<isize>>, (isize, isize)) {
         }
     }
 
-    (grid, start)
+    start
 }
 
 pub fn get_dist(grid: Vec<Vec<isize>>, start: (isize, isize)) -> usize {
@@ -72,7 +74,7 @@ pub fn get_dist(grid: Vec<Vec<isize>>, start: (isize, isize)) -> usize {
                 if to_go == END {
                     to_go = HIGHEST;
                 }
-                if to_go > cur && to_go - cur >= 2 {
+                if to_go == START || (to_go > cur && to_go - cur >= 2) {
                     continue;
                 }
 
