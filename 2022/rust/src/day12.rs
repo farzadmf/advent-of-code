@@ -3,9 +3,10 @@ use std::collections::VecDeque;
 use std::collections::{HashMap, HashSet};
 use std::io::stdin;
 
-pub const START: isize = -1;
-pub const END: isize = -2;
-pub const HIGHEST: isize = 'z' as isize - 'a' as isize;
+const START: isize = 0;
+const END: isize = -2;
+const HIGHEST: isize = 'z' as isize - 'a' as isize;
+const LOWEST: isize = 'a' as isize - 'a' as isize;
 
 pub fn get_grid(path: &str) -> Vec<Vec<isize>> {
     let input = read_input(path);
@@ -39,7 +40,23 @@ pub fn get_start(grid: &Vec<Vec<isize>>) -> (isize, isize) {
     start
 }
 
-pub fn get_dist(grid: Vec<Vec<isize>>, start: (isize, isize)) -> usize {
+pub fn get_starts(grid: &Vec<Vec<isize>>) -> Vec<(isize, isize)> {
+    let (rows, cols) = (grid.len(), grid[0].len());
+    let mut starts = Vec::new();
+
+    for r in 0..rows {
+        for c in 0..cols {
+            let cur = grid[r][c];
+            if cur == START || cur == LOWEST {
+                starts.push((r as isize, c as isize));
+            }
+        }
+    }
+
+    starts
+}
+
+pub fn get_dist(grid: &Vec<Vec<isize>>, start: (isize, isize)) -> usize {
     let mut queue: VecDeque<(isize, isize, usize)> = VecDeque::from([(start.0, start.1, 0)]);
     let mut visited = HashSet::new();
     let mut visited_map = HashMap::new();
@@ -83,9 +100,10 @@ pub fn get_dist(grid: Vec<Vec<isize>>, start: (isize, isize)) -> usize {
         }
     }
 
-    0
+    usize::MAX
 }
 
+// Only public to avoid the unused warning!
 pub fn display_grid(
     grid: &Vec<Vec<isize>>,
     cur_location: (usize, usize, usize),
