@@ -1,32 +1,101 @@
-use std::collections::HashSet;
+use crate::read_input;
+use std::collections::VecDeque;
+use std::collections::{HashMap, HashSet};
 use std::io::stdin;
 
-pub fn g2g(grid: &Vec<Vec<i32>>, row: i32, col: i32) -> bool {
-    let (rows, cols) = (grid.len() as i32, grid[0].len() as i32);
+pub const START: isize = -1;
+pub const END: isize = -2;
+pub const HIGHEST: isize = 'z' as isize - 'a' as isize;
 
-    if row >= rows || row < 0 || col >= cols || col < 0 {
-        return false;
+pub fn get_grid(path: &str) -> (Vec<Vec<isize>>, (isize, isize)) {
+    let input = read_input(path);
+
+    let grid = input
+        .lines()
+        .map(|line| {
+            line.chars()
+                .map(|c| match c {
+                    'S' => START,
+                    'E' => END,
+                    _ => c as isize - 'a' as isize,
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
+
+    let (rows, cols) = (grid.len(), grid[0].len());
+    let mut start = (0 as isize, 0 as isize);
+
+    for r in 0..rows {
+        for c in 0..cols {
+            if grid[r][c] == START {
+                start = (r as isize, c as isize)
+            }
+        }
     }
 
-    true
-    // let to_go = grid[row][col];
-    // if to_go == -10 {
-    //     return
-    // }
+    (grid, start)
+}
+
+pub fn get_dist(grid: Vec<Vec<isize>>, start: (isize, isize)) -> usize {
+    let mut queue: VecDeque<(isize, isize, usize)> = VecDeque::from([(start.0, start.1, 0)]);
+    let mut visited = HashSet::new();
+    let mut visited_map = HashMap::new();
+    let (rows, cols) = (grid.len(), grid[0].len());
+
+    while !queue.is_empty() {
+        for _ in 0..queue.len() {
+            let (r, c, dist) = queue.pop_back().unwrap();
+            let cur = grid[r as usize][c as usize];
+
+            if cur == END {
+                return dist;
+            }
+
+            if visited.contains(&(r, c)) {
+                continue;
+            }
+            visited.insert((r, c));
+            visited_map.insert((r, c), dist);
+
+            // display_grid(&grid, (r as usize, c as usize, dist), &visited_map);
+
+            let dirs = [(0, 1), (1, 0), (0, -1), (-1, 0)];
+            for (dr, dc) in dirs {
+                let (nr, nc) = (r + dr, c + dc);
+
+                if nr >= rows as isize || nr < 0 || nc >= cols as isize || nc < 0 {
+                    continue;
+                }
+
+                let mut to_go = grid[nr as usize][nc as usize];
+                if to_go == END {
+                    to_go = HIGHEST;
+                }
+                if to_go > cur && to_go - cur >= 2 {
+                    continue;
+                }
+
+                queue.push_front((nr, nc, dist + 1));
+            }
+        }
+    }
+
+    0
 }
 
 pub fn display_grid(
-    grid: &Vec<Vec<i32>>,
+    grid: &Vec<Vec<isize>>,
     cur_location: (usize, usize, usize),
-    visited: &HashSet<(i32, i32)>,
+    visited_map: &HashMap<(isize, isize), usize>,
 ) {
     let (rows, cols) = (grid.len(), grid[0].len());
 
     for r in 0..rows {
         for c in 0..cols {
-            if grid[r][c] == -1 {
+            if grid[r][c] == START {
                 print!("{:>4}", "S");
-            } else if grid[r][c] == -10 {
+            } else if grid[r][c] == END {
                 print!("{:>4}", "E");
             } else {
                 print!("{:>4}", grid[r][c]);
@@ -39,14 +108,14 @@ pub fn display_grid(
 
     for r in 0..rows {
         for c in 0..cols {
-            if grid[r][c] == -1 {
+            if grid[r][c] == START {
                 print!("{:>4}", "S");
-            } else if grid[r][c] == -10 {
+            } else if grid[r][c] == END {
                 print!("{:>4}", "E");
             } else if (r, c) == (cur_location.0, cur_location.1) {
                 print!("{:>4}", cur_location.2);
-            } else if visited.contains(&(r as i32, c as i32)) {
-                print!("{:>4}", "-");
+            } else if visited_map.contains_key(&(r as isize, c as isize)) {
+                print!("{:>4}", visited_map.get(&(r as isize, c as isize)).unwrap());
             } else {
                 print!("{:>4}", ".");
             }
