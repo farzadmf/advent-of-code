@@ -5,22 +5,39 @@ use rust::day_pday_::part_ppart_;
 use std::fs;
 
 fn main() {
-    let file = fs::read_to_string(\"input/day_pday_\").unwrap();
+    let file = fs::read_to_string(\"../input/day_pday_\").unwrap();
     part_ppart_(&file);
 }
 '
 
 lib_template := '
-pub fn part01(input: &str) {
-  println!(\"+++++++++++++++++++++++ PART 1 ++++++++++++++++++++++++++++\")
+pub fn part01(input: &str) -> &str {
+    println!(\"+++++++++++++++++++++++ PART 1 ++++++++++++++++++++++++++++\");
 
-  println!(\"----------------------- PART 1 ----------------------------\")
+    input
 }
 
-pub fn part02(input: &str) {
-  println!(\"+++++++++++++++++++++++ PART 2 ++++++++++++++++++++++++++++\")
+pub fn part02(input: &str) -> &str {
+    println!(\"+++++++++++++++++++++++ PART 2 ++++++++++++++++++++++++++++\");
 
-  println!(\"----------------------- PART 2 ----------------------------\")
+    input
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_part01() {
+        let input = \"part01\";
+        assert_eq!(\"part01\", part01(input));
+    }
+
+    #[test]
+    fn test_part02() {
+        let input = \"part02\";
+        assert_eq!(\"part02\", part02(input));
+    }
 }
 '
 
@@ -36,6 +53,20 @@ init day:
   just _init_bin $padded_day 01 && \
   just _init_bin $padded_day 02 && \
   just _init_lib $padded_day
+
+test day part='':
+  @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
+  [[ -n "{{part}}" ]] && \
+    local padded_part=$(python -c "print('{{part}}'.zfill(2), end=None)") || \
+    local padded_part=$part && \
+  cd rust && \
+  cargo watch -x "test day${padded_day}::tests::test_part${padded_part}"
+
+run day part:
+  @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
+  local padded_part=$(python -c "print('{{part}}'.zfill(2), end=None)") && \
+  cd rust && \
+  cargo watch -x "run --bin day${padded_day}_part${padded_part}"
 
 _init_bin day part:
   @echo "{{trim(bin_template)}}" | \
