@@ -41,15 +41,9 @@ mod tests {
 }
 '
 
-get-input day:
-  [[ $AOC_COOKIE ]] || { echo 'set $AOC_COOKIE'; return 1 }
-  @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
-  curl -sL --cookie "session=$AOC_COOKIE" \
-    https://adventofcode.com/$(date +%Y)/day/{{day}}/input > input/day${padded_day} && \
-  echo 'Input saved' || echo 'Failed!'
-
 init day:
   @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
+  just _get_input 1 && \
   just _init_bin $padded_day 01 && \
   just _init_bin $padded_day 02 && \
   just _init_lib $padded_day
@@ -67,6 +61,12 @@ run day part:
   local padded_part=$(python -c "print('{{part}}'.zfill(2), end=None)") && \
   cd rust && \
   cargo watch -x "run --bin day${padded_day}_part${padded_part}"
+
+_get_input day:
+  @[[ $AOC_COOKIE ]] || { echo 'set $AOC_COOKIE'; return 1 }
+  @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
+  curl -sL --cookie "session=$AOC_COOKIE" \
+    https://adventofcode.com/$(date +%Y)/day/{{day}}/input > input/day${padded_day}
 
 _init_bin day part:
   @echo "{{trim(bin_template)}}" | \
