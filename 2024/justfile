@@ -1,0 +1,50 @@
+set shell := ['zsh', '-c']
+
+bin_template := '
+use rust::day_pday_::part_ppart_;
+use std::fs;
+
+fn main() {
+    let file = fs::read_to_string(\"input/day_pday_\").unwrap();
+    part_ppart_(&file);
+}
+'
+
+lib_template := '
+pub fn part01(input: &str) {
+  println!(\"+++++++++++++++++++++++ PART 1 ++++++++++++++++++++++++++++\")
+
+  println!(\"----------------------- PART 1 ----------------------------\")
+}
+
+pub fn part02(input: &str) {
+  println!(\"+++++++++++++++++++++++ PART 2 ++++++++++++++++++++++++++++\")
+
+  println!(\"----------------------- PART 2 ----------------------------\")
+}
+'
+
+get-input day:
+  [[ $AOC_COOKIE ]] || { echo 'set $AOC_COOKIE'; return 1 }
+  @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
+  curl -sL --cookie "session=$AOC_COOKIE" \
+    https://adventofcode.com/$(date +%Y)/day/{{day}}/input > input/day${padded_day} && \
+  echo 'Input saved' || echo 'Failed!'
+
+init day:
+  @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
+  just _init_bin $padded_day 01 && \
+  just _init_bin $padded_day 02 && \
+  just _init_lib $padded_day
+
+_init_bin day part:
+  @echo "{{trim(bin_template)}}" | \
+    sd '_pday_' {{day}} | \
+    sd '_ppart_' {{part}} > rust/src/bin/day{{day}}_part{{part}}.rs
+
+_init_lib day:
+  @local lib_rs=rust/src/lib.rs && \
+  touch $lib_rs && \
+  local mod_str='pub mod day{{day}}' && \
+  echo "{{trim(lib_template)}}" > rust/src/day{{day}}.rs && \
+    rg -q $mod_str $lib_rs || echo "$mod_str;" >> $lib_rs
