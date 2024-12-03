@@ -37,7 +37,33 @@ pub fn part01(input: &str) -> i32 {
 }
 
 pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+    input
+        .lines()
+        .map(|report| {
+            let levels: Vec<i32> = report
+                .split_whitespace()
+                .map(|c| c.parse::<i32>().unwrap())
+                .collect();
+
+            if is_safe(&levels) {
+                return true;
+            }
+
+            for i in 0..=levels.len() - 1 {
+                let mut clone = levels.clone();
+                clone.remove(i);
+
+                if is_safe(&clone) {
+                    return true;
+                }
+            }
+
+            false
+        })
+        .filter(|value| *value)
+        .count()
+        .try_into()
+        .unwrap()
 }
 
 #[cfg(test)]
@@ -59,7 +85,14 @@ mod tests {
 
     #[test]
     fn test_part02() {
-        let input = "part02";
-        assert_eq!(1, part02(input.trim()));
+        let input = "
+7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9
+";
+        assert_eq!(4, part02(input.trim()));
     }
 }
