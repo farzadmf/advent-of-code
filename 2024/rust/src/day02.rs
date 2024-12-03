@@ -23,12 +23,12 @@ pub fn part01(input: &str) -> i32 {
     input
         .lines()
         .map(|report| {
-            is_safe(
-                report
-                    .split_whitespace()
-                    .map(|c| c.parse::<i32>().unwrap())
-                    .collect(),
-            )
+            let levels = report
+                .split_whitespace()
+                .map(|c| c.parse::<i32>().unwrap())
+                .collect();
+
+            is_safe(levels)
         })
         .filter(|value| *value)
         .count()
