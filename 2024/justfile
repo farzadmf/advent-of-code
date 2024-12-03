@@ -43,7 +43,7 @@ mod tests {
 
 init day:
   @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
-  just _get_input 1 && \
+  just _get_input {{day}} && \
   just _init_bin $padded_day 01 && \
   just _init_bin $padded_day 02 && \
   just _init_lib $padded_day
