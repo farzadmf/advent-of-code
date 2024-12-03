@@ -6,20 +6,19 @@ use std::fs;
 
 fn main() {
     let file = fs::read_to_string(\"../input/day_pday_\").unwrap();
-    part_ppart_(&file);
+
+    println!(\"+++++++++++++++++++++++ PART _ppart_ ++++++++++++++++++++++++++++\");
+    println!(part_ppart_(&file));
+    println!(\"----------------------- PART _ppart_ ----------------------------\");
 }
 '
 
 lib_template := '
 pub fn part01(input: &str) -> i32 {
-    println!(\"+++++++++++++++++++++++ PART 1 ++++++++++++++++++++++++++++\");
-
     input.len().try_into().unwrap()
 }
 
 pub fn part02(input: &str) -> i32 {
-    println!(\"+++++++++++++++++++++++ PART 2 ++++++++++++++++++++++++++++\");
-
     input.len().try_into().unwrap()
 }
 
