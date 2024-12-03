@@ -7,8 +7,8 @@ pub fn part01(input: &str) -> i32 {
 
     let mut result = 0;
     for (_, [left, right]) in re.captures_iter(input).map(|c| c.extract()) {
-        let left = left.parse::<i32>().unwrap();
-        let right = right.parse::<i32>().unwrap();
+        let left: i32 = left.parse().unwrap();
+        let right: i32 = right.parse().unwrap();
 
         result += left * right;
     }
