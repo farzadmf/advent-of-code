@@ -1,4 +1,4 @@
-fn is_safe(report: Vec<i32>) -> bool {
+fn is_safe(report: &[i32]) -> bool {
     let total = report.len();
     let is_increasing = report[0] < report[total - 1];
     let mut is_safe = true;
@@ -23,12 +23,12 @@ pub fn part01(input: &str) -> i32 {
     input
         .lines()
         .map(|report| {
-            let levels = report
+            let levels: Vec<i32> = report
                 .split_whitespace()
                 .map(|c| c.parse::<i32>().unwrap())
                 .collect();
 
-            is_safe(levels)
+            is_safe(&levels)
         })
         .filter(|value| *value)
         .count()
@@ -45,7 +45,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_part01() {
+    fn test_day02() {
         let input = "
 7 6 4 2 1
 1 2 7 8 9
