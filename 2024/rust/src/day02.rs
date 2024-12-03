@@ -1,31 +1,33 @@
+fn is_safe(report: &str) -> bool {
+    let values: Vec<i32> = report
+        .split_whitespace()
+        .map(|c| c.parse::<i32>().unwrap())
+        .collect();
+
+    let total = values.len();
+    let is_increasing = values[0] < values[total - 1];
+    let mut is_safe = true;
+
+    for i in 0..values.len() - 1 {
+        let (cur, nxt) = (values[i], values[i + 1]);
+
+        if (nxt == cur)
+            || (is_increasing && nxt < cur)
+            || (!is_increasing && nxt > cur)
+            || (nxt - cur).abs() > 3
+        {
+            is_safe = false;
+            break;
+        }
+    }
+
+    is_safe
+}
+
 pub fn part01(input: &str) -> i32 {
     input
         .lines()
-        .map(|line| {
-            let values: Vec<i32> = line
-                .split_whitespace()
-                .map(|c| c.parse::<i32>().unwrap())
-                .collect();
-
-            let total = values.len();
-            let is_increasing = values[0] < values[total - 1];
-            let mut is_safe = true;
-
-            for i in 0..values.len() - 1 {
-                let (cur, nxt) = (values[i], values[i + 1]);
-
-                if (nxt == cur)
-                    || (is_increasing && nxt < cur)
-                    || (!is_increasing && nxt > cur)
-                    || (nxt - cur).abs() > 3
-                {
-                    is_safe = false;
-                    break;
-                }
-            }
-
-            is_safe
-        })
+        .map(is_safe)
         .filter(|value| *value)
         .count()
         .try_into()
