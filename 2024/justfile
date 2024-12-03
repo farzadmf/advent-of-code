@@ -11,16 +11,16 @@ fn main() {
 '
 
 lib_template := '
-pub fn part01(input: &str) -> &str {
+pub fn part01(input: &str) -> i32 {
     println!(\"+++++++++++++++++++++++ PART 1 ++++++++++++++++++++++++++++\");
 
-    input
+    input.len().try_into().unwrap()
 }
 
-pub fn part02(input: &str) -> &str {
+pub fn part02(input: &str) -> i32 {
     println!(\"+++++++++++++++++++++++ PART 2 ++++++++++++++++++++++++++++\");
 
-    input
+    input.len().try_into().unwrap()
 }
 
 #[cfg(test)]
@@ -30,13 +30,13 @@ mod tests {
     #[test]
     fn test_part01() {
         let input = \"part01\";
-        assert_eq!(\"part01\", part01(input));
+        assert_eq!(6, part01(input));
     }
 
     #[test]
     fn test_part02() {
         let input = \"part02\";
-        assert_eq!(\"part02\", part02(input));
+        assert_eq!(6, part02(input));
     }
 }
 '
