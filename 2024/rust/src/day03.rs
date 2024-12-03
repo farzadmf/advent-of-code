@@ -32,7 +32,7 @@ mod tests {
 
     #[test]
     fn test_part02() {
-        let input = "part02";
-        assert_eq!(1, part02(input.trim()));
+        let input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))";
+        assert_eq!(48, part02(input.trim()));
     }
 }
