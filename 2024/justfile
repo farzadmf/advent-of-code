@@ -54,13 +54,13 @@ test day part='':
     local padded_part=$(python -c "print('{{part}}'.zfill(2), end=None)") || \
     local padded_part=$part && \
   cd rust && \
-  cargo watch -x "test day${padded_day}::tests::test_part${padded_part}"
+  cargo watch -x "nextest run day${padded_day}::tests::test_part${padded_part}" -c
 
 run day part:
   @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
   local padded_part=$(python -c "print('{{part}}'.zfill(2), end=None)") && \
   cd rust && \
-  cargo watch -x "run --bin day${padded_day}_part${padded_part}"
+  cargo watch -x "run --bin day${padded_day}_part${padded_part}" -c
 
 _get_input day:
   @[[ $AOC_COOKIE ]] || { echo 'set $AOC_COOKIE'; return 1 }
