@@ -1,5 +1,19 @@
+use core::str;
+
+use regex::Regex;
+
 pub fn part01(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+    let re = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").expect("regex creation failed!");
+
+    let mut result = 0;
+    for (_, [left, right]) in re.captures_iter(input).map(|c| c.extract()) {
+        let left = left.parse::<i32>().unwrap();
+        let right = right.parse::<i32>().unwrap();
+
+        result += left * right;
+    }
+
+    result
 }
 
 pub fn part02(input: &str) -> i32 {
