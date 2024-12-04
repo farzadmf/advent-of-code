@@ -1,5 +1,3 @@
-use core::str;
-
 use regex::Regex;
 
 pub fn part01(input: &str) -> i32 {
@@ -17,7 +15,33 @@ pub fn part01(input: &str) -> i32 {
 }
 
 pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+    let re =
+        Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)").expect("regex creation failed!");
+
+    // After wasting 2 hours for a complicated solution (to keep track of start of conditions,
+    // matching against start of multiplies etc.), got the idea of "enabled" from:
+    // https://www.perrotta.dev/2024/12/advent-of-code-day-3/
+    let mut enabled = true;
+    let mut result = 0;
+
+    for c in re.captures_iter(input) {
+        match c.get(0).unwrap().as_str() {
+            "do()" => enabled = true,
+            "don't()" => enabled = false,
+            _ => {
+                if !enabled {
+                    continue;
+                }
+
+                let left: i32 = c.get(1).unwrap().as_str().parse().unwrap();
+                let right: i32 = c.get(2).unwrap().as_str().parse().unwrap();
+
+                result += left * right;
+            }
+        }
+    }
+
+    result
 }
 
 #[cfg(test)]
