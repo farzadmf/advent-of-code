@@ -52,6 +52,47 @@ fn xmas_count(table: &[Vec<char>], row: isize, col: isize) -> i32 {
     count
 }
 
+fn x_mas_count(table: &[Vec<char>], row: isize, col: isize) -> i32 {
+    let mut count = 0;
+
+    let (rows, cols) = (table.len() as isize, table[0].len() as isize);
+
+    if table[row as usize][col as usize] != 'A' {
+        return 0;
+    }
+
+    let (ulr, ulc) = (row - 1, col - 1); // up-left
+    let (drr, drc) = (row + 1, col + 1); // down-right
+
+    let (urr, urc) = (row - 1, col + 1); // up-right
+    let (dlr, dlc) = (row + 1, col - 1); // down-left
+
+    let is_good_row = |row: isize| row >= 0 && row < rows;
+    let is_good_col = |col: isize| col >= 0 && col < cols;
+
+    if is_good_row(ulr)
+        && is_good_row(urr)
+        && is_good_row(dlr)
+        && is_good_row(drr)
+        && is_good_col(ulc)
+        && is_good_col(urc)
+        && is_good_col(dlc)
+        && is_good_col(drc)
+        // up-left|down-right is 'SM' or 'MS'
+        && ((table[ulr as usize][ulc as usize] == 'S' && table[drr as usize][drc as usize] == 'M')
+            || (table[ulr as usize][ulc as usize] == 'M'
+                && table[drr as usize][drc as usize] == 'S'))
+        // up-right|down-left is 'SM' or 'MS'
+        && ((table[urr as usize][urc as usize] == 'S' && table[dlr as usize][dlc as usize] == 'M')
+            || (table[urr as usize][urc as usize] == 'M'
+                && table[dlr as usize][dlc as usize] == 'S'))
+    {
+        count += 1;
+    }
+
+    count
+}
+
 pub fn part01(input: &str) -> i32 {
     let mut table: Vec<Vec<char>> = vec![];
 
@@ -73,7 +114,23 @@ pub fn part01(input: &str) -> i32 {
 }
 
 pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+    let mut table: Vec<Vec<char>> = vec![];
+
+    for line in input.lines() {
+        table.push(vec![]);
+        let len = table.len();
+        table[len - 1] = line.chars().collect();
+    }
+
+    let (rows, cols) = (table.len(), table[0].len());
+    let mut result = 0;
+    for row in 0..rows {
+        for col in 0..cols {
+            result += x_mas_count(&table, row as isize, col as isize);
+        }
+    }
+
+    result
 }
 
 #[cfg(test)]
