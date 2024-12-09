@@ -8,7 +8,7 @@ fn main() {
     let file = fs::read_to_string(\"../input/day_pday_\").unwrap();
 
     println!(\"+++++++++++++++++++++++ PART _ppart_ ++++++++++++++++++++++++++++\");
-    println!(\"{}\", part_ppart_(&file));
+    println!(\"{}\", part_ppart_(file.trim()));
     println!(\"----------------------- PART _ppart_ ----------------------------\");
 }
 '
