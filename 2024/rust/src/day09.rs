@@ -1,5 +1,5 @@
 #[derive(Debug, Copy, Clone)]
-struct Value(i64);
+struct Value(i64, usize); // value, length
 
 pub fn part01(input: &str) -> i64 {
     let mut converted = "".to_string();
@@ -20,7 +20,7 @@ pub fn part01(input: &str) -> i64 {
 
         converted.push_str(to_add.repeat(value).as_str());
         for _ in 0..value {
-            converted2.push(Value(to_add2));
+            converted2.push(Value(to_add2, value));
         }
     });
 
@@ -34,10 +34,12 @@ pub fn part01(input: &str) -> i64 {
             r -= 1;
         }
 
-        if l < r && my[l].0 == -1 && my[r].0 != -1 {
-            (my[l], my[r]) = (my[r], my[l]);
-            (l, r) = (l + 1, r - 1);
+        if l > r || my[l].0 != -1 || my[r].0 == -1 {
+            continue;
         }
+
+        (my[l], my[r]) = (my[r], my[l]);
+        (l, r) = (l + 1, r - 1);
     }
 
     let result = my.iter().enumerate().fold(0, |acc, (pos, c)| {
