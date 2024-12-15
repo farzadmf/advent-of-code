@@ -1,5 +1,5 @@
 #[derive(Debug, Copy, Clone)]
-struct Value(i64, usize); // value, length
+struct Value(i64);
 
 pub fn part01(input: &str) -> i64 {
     let mut converted = "".to_string();
@@ -20,7 +20,7 @@ pub fn part01(input: &str) -> i64 {
 
         converted.push_str(to_add.repeat(value).as_str());
         for _ in 0..value {
-            converted2.push(Value(to_add2, value));
+            converted2.push(Value(to_add2));
         }
     });
 
