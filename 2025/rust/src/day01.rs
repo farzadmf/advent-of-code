@@ -30,17 +30,12 @@ pub fn part01(input: &str) -> i32 {
         .lines()
         .map(|line| line.parse::<Rotation>().expect("invalid move"))
         .fold((50, 0), |(value, count), rotation| {
-            let new_value = match rotation {
-                Rotation::Left(count) => value - count,
-                Rotation::Right(count) => value + count,
+            let delta = match rotation {
+                Rotation::Left(count) => -count,
+                Rotation::Right(count) => count,
             };
-            let new_value = if new_value < 0 {
-                100 + new_value
-            } else {
-                new_value
-            } % 100;
-            let new_count = if new_value == 0 { count + 1 } else { count };
-            (new_value, new_count)
+            let new_value = (value + delta).rem_euclid(100);
+            (new_value, count + (new_value == 0) as i32)
         })
         .1
 }
