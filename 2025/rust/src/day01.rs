@@ -41,7 +41,26 @@ pub fn part01(input: &str) -> i32 {
 }
 
 pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+    input
+        .lines()
+        .map(|line| line.parse::<Rotation>().expect("invalid move"))
+        .fold((50, 0), |(value, count), rotation| {
+            let mut new_count = count;
+            let delta = match rotation {
+                Rotation::Left(count) => -count,
+                Rotation::Right(count) => count,
+            };
+
+            let mut new_value = value + delta;
+            if new_value <= 0 {
+                new_count += 1
+            };
+
+            new_value = new_value.rem_euclid(100);
+            new_count += new_value / 100;
+            (new_value, new_count)
+        })
+        .1
 }
 
 #[cfg(test)]
@@ -67,7 +86,18 @@ L82
 
     #[test]
     fn test_part02() {
-        let input = "part02";
-        assert_eq!(1, part02(input.trim()));
+        let input = "
+L68
+L30
+R48
+L5
+R60
+L55
+L1
+L99
+R14
+L82
+        ";
+        assert_eq!(6, part02(input.trim()));
     }
 }
