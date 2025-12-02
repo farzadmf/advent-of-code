@@ -43,6 +43,7 @@ mod tests {
 init day:
   @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
   just _get_input {{day}} && \
+  just _init_cargo && \
   just _init_bin $padded_day 01 && \
   just _init_bin $padded_day 02 && \
   just _init_lib $padded_day
@@ -53,7 +54,7 @@ test day part='':
     local padded_part=$(python -c "print('{{part}}'.zfill(2), end=None)") || \
     local padded_part=$part && \
   cd rust && \
-  cargo watch -x "nextest run day${padded_day}::tests::test_part${padded_part}" -c
+  cargo watch -x "nextest run day${padded_day}::tests::test_part${padded_part} --nocapture" -c
 
 run day part:
   @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
@@ -66,6 +67,10 @@ _get_input day:
   @local padded_day=$(python -c "print('{{day}}'.zfill(2), end=None)") && \
   curl -sL --cookie "session=$AOC_COOKIE" \
     https://adventofcode.com/$(basename $PWD)/day/{{day}}/input > input/day${padded_day}
+
+_init_cargo:
+  @mkdir rust
+  @[[ -f rust/cargo.toml ]] || cargo init rust
 
 _init_bin day part:
   @mkdir -p rust/src/bin && \
