@@ -33,12 +33,7 @@ pub fn part02(input: &str) -> i64 {
         .map(|number| number.to_string())
         .filter(|number| {
             let len = number.len();
-            for i in 1..=len / 2 {
-                if len % i == 0 && number[..i].repeat(len / i) == *number {
-                    return true;
-                }
-            }
-            false
+            (1..=len / 2).any(|i| len % i == 0 && number[..i].repeat(len / i) == *number)
         })
         .map(|number| number.parse::<i64>().expect("no number?"))
         .sum::<i64>()
