@@ -69,8 +69,8 @@ _get_input day:
     https://adventofcode.com/$(basename $PWD)/day/{{day}}/input > input/day${padded_day}
 
 _init_cargo:
-  @mkdir rust
-  @[[ -f rust/cargo.toml ]] || cargo init rust
+  @mkdir -p rust
+  @[[ -f rust/Cargo.toml ]] || cargo init rust
 
 _init_bin day part:
   @mkdir -p rust/src/bin && \
