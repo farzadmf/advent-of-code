@@ -1,5 +1,34 @@
-pub fn part01(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+pub fn part01(input: &str) -> i64 {
+    let mut lines: Vec<&str> = input.lines().collect();
+    let mut number_lines: Vec<Vec<&str>> = vec![];
+
+    let signs: Vec<&str> = lines.pop().unwrap().split_whitespace().collect();
+
+    for line in lines {
+        number_lines.push(line.split_whitespace().collect());
+    }
+
+    number_lines
+        .iter()
+        .fold(
+            (0..number_lines[0].len())
+                .map(|i| if signs[i] == "+" { 0 } else { 1 })
+                .collect(),
+            |mut acc: Vec<i64>, number_line| {
+                number_line.iter().enumerate().for_each(|(idx2, number)| {
+                    let sign = signs[idx2];
+
+                    if sign == "+" {
+                        acc[idx2] += (**number).parse::<i64>().unwrap();
+                    } else {
+                        acc[idx2] *= (**number).parse::<i64>().unwrap();
+                    }
+                });
+                acc
+            },
+        )
+        .iter()
+        .sum()
 }
 
 pub fn part02(input: &str) -> i32 {
