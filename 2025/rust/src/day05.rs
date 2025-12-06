@@ -2,16 +2,19 @@ use std::ops::RangeInclusive;
 
 use itertools::Itertools;
 
-pub fn part01(input: &str) -> i64 {
-    let (first, second) = input.split_once("\n\n").expect("cound't split on new line");
-    let _ranges: Vec<RangeInclusive<i64>> = first
+fn raw_ranges(range_str: &str) -> Vec<RangeInclusive<i64>> {
+    range_str
         .lines()
         .map(|line| {
             let (left, right) = line.split_once("-").unwrap();
             left.parse().unwrap()..=right.parse().unwrap()
         })
         .sorted_by_key(|r| *r.start())
-        .collect();
+        .collect()
+}
+
+fn combine_ranges(range_str: &str) -> Vec<RangeInclusive<i64>> {
+    let _ranges = raw_ranges(range_str);
 
     let mut ranges: Vec<RangeInclusive<i64>> = vec![];
     let mut start = *_ranges[0].start();
@@ -27,6 +30,13 @@ pub fn part01(input: &str) -> i64 {
     }
     ranges.push(start..=end);
 
+    ranges
+}
+
+pub fn part01(input: &str) -> i64 {
+    let (first, second) = input.split_once("\n\n").expect("cound't split on new line");
+
+    let ranges = combine_ranges(first);
     let numbers: Vec<i64> = second.lines().map(|str| str.parse().unwrap()).collect();
 
     let mut spoiled = 0;
