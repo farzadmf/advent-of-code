@@ -52,8 +52,15 @@ pub fn part01(input: &str) -> i64 {
     spoiled
 }
 
-pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+pub fn part02(input: &str) -> i64 {
+    let (first, _) = input.split_once("\n\n").expect("cound't split on new line");
+
+    let ranges = combine_ranges(first);
+
+    ranges
+        .iter()
+        .map(|range| *range.end() - *range.start() + 1)
+        .sum()
 }
 
 #[cfg(test)]
@@ -80,7 +87,19 @@ mod tests {
 
     #[test]
     fn test_part02() {
-        let input = "part02";
-        assert_eq!(1, part02(input.trim()));
+        let input = "
+3-5
+10-14
+16-20
+12-18
+
+1
+5
+8
+11
+17
+32
+";
+        assert_eq!(14, part02(input.trim()));
     }
 }
