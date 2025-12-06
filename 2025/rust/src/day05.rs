@@ -2,7 +2,7 @@ use std::ops::RangeInclusive;
 
 use itertools::Itertools;
 
-fn raw_ranges(range_str: &str) -> Vec<RangeInclusive<i64>> {
+fn combine_ranges(range_str: &str) -> Vec<RangeInclusive<i64>> {
     range_str
         .lines()
         .map(|line| {
@@ -10,27 +10,24 @@ fn raw_ranges(range_str: &str) -> Vec<RangeInclusive<i64>> {
             left.parse().unwrap()..=right.parse().unwrap()
         })
         .sorted_by_key(|r| *r.start())
-        .collect()
-}
+        .fold(vec![], |mut acc, range| {
+            let (mut start, mut end) = (*range.start(), *range.end());
 
-fn combine_ranges(range_str: &str) -> Vec<RangeInclusive<i64>> {
-    let _ranges = raw_ranges(range_str);
+            if let Some(last) = acc.pop() {
+                let (last_start, last_end) = (*last.start(), *last.end());
 
-    let mut ranges: Vec<RangeInclusive<i64>> = vec![];
-    let mut start = *_ranges[0].start();
-    let mut end = *_ranges[0].end();
-    for range in &_ranges {
-        if *range.start() <= end {
-            end = *range.end().max(&end);
-        } else if *range.start() > end {
-            ranges.push(start..=end);
-            start = *range.start();
-            end = *range.end();
-        }
-    }
-    ranges.push(start..=end);
+                if start <= last_end {
+                    start = last_start;
+                    end = end.max(last_end);
+                } else {
+                    acc.push(last_start..=last_end)
+                }
+            }
 
-    ranges
+            acc.push(start..=end);
+
+            acc
+        })
 }
 
 pub fn part01(input: &str) -> i64 {
