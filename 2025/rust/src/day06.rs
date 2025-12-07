@@ -32,29 +32,41 @@ pub fn part01(input: &str) -> i64 {
 }
 
 pub fn part02(input: &str) -> i64 {
-    let mut lines: Vec<&str> = input.lines().collect();
-    let mut number_lines: Vec<Vec<&str>> = vec![];
+    let lines: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
 
-    let signs: Vec<&str> = lines.pop().unwrap().split_whitespace().collect();
+    let (ops_row, num_rows) = lines.split_last().unwrap();
 
-    let mut numbers: Vec<Vec<char>> = vec![vec![]; signs.len()];
-    lines.iter().for_each(|line| {
-        line.chars().enumerate().for_each(|(idx, number)| {
-            numbers[idx].push(number);
-            dbg!(idx, number, &numbers);
-        });
+    let ops: Vec<char> = ops_row.iter().filter(|c| **c != ' ').cloned().collect();
 
-        // number_lines.push(line.split_whitespace().collect());
+    let mut idx = 0;
+    let mut numbers: Vec<Vec<i64>> = vec![vec![]; ops.len()];
+    (0..num_rows[0].len()).for_each(|col| {
+        let digits_str: String = num_rows
+            .iter()
+            .map(|l| l[col])
+            .collect::<String>()
+            .trim()
+            .to_string();
+
+        if digits_str.is_empty() {
+            idx += 1;
+        } else {
+            numbers[idx].push(digits_str.parse().unwrap());
+        }
     });
 
-    dbg!(numbers);
+    numbers
+        .iter()
+        .rev()
+        .enumerate()
+        .map(|(idx, nums)| {
+            if ops[ops.len() - 1 - idx] == '+' {
+                return nums.iter().sum::<i64>();
+            }
 
-    // number_lines
-    //     .iter()
-    //     .enumerate()
-    //     .for_each(|(idx, number_line)| {});
-
-    5
+            nums.iter().product::<i64>()
+        })
+        .sum()
 }
 
 #[cfg(test)]
@@ -78,8 +90,8 @@ mod tests {
 123 328  51 64  
  45 64  387 23  
   6 98  215 314 
-*   +   *   +
+*   +   *   +   
 ";
-        assert_eq!(3263827, part02(input.trim()));
+        assert_eq!(3263827, part02(input.trim_matches('\n')));
     }
 }
