@@ -58,13 +58,13 @@ pub fn part02(input: &str) -> i64 {
     numbers
         .iter()
         .rev()
-        .enumerate()
-        .map(|(idx, nums)| {
-            if ops[ops.len() - 1 - idx] == '+' {
-                return nums.iter().sum::<i64>();
+        .zip(ops.iter().rev())
+        .map(|(nums, &op)| {
+            if op == '+' {
+                nums.iter().sum::<i64>()
+            } else {
+                nums.iter().product::<i64>()
             }
-
-            nums.iter().product::<i64>()
         })
         .sum()
 }
