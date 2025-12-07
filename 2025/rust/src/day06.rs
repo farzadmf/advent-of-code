@@ -31,8 +31,30 @@ pub fn part01(input: &str) -> i64 {
         .sum()
 }
 
-pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+pub fn part02(input: &str) -> i64 {
+    let mut lines: Vec<&str> = input.lines().collect();
+    let mut number_lines: Vec<Vec<&str>> = vec![];
+
+    let signs: Vec<&str> = lines.pop().unwrap().split_whitespace().collect();
+
+    let mut numbers: Vec<Vec<char>> = vec![vec![]; signs.len()];
+    lines.iter().for_each(|line| {
+        line.chars().enumerate().for_each(|(idx, number)| {
+            numbers[idx].push(number);
+            dbg!(idx, number, &numbers);
+        });
+
+        // number_lines.push(line.split_whitespace().collect());
+    });
+
+    dbg!(numbers);
+
+    // number_lines
+    //     .iter()
+    //     .enumerate()
+    //     .for_each(|(idx, number_line)| {});
+
+    5
 }
 
 #[cfg(test)]
@@ -52,7 +74,12 @@ mod tests {
 
     #[test]
     fn test_part02() {
-        let input = "part02";
-        assert_eq!(1, part02(input.trim()));
+        let input = "
+123 328  51 64  
+ 45 64  387 23  
+  6 98  215 314 
+*   +   *   +
+";
+        assert_eq!(3263827, part02(input.trim()));
     }
 }
