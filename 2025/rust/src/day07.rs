@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 pub fn part01(input: &str) -> i32 {
     let mut manifold: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
@@ -36,17 +36,55 @@ pub fn part01(input: &str) -> i32 {
     total
 }
 
-pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+pub fn part02(input: &str) -> i64 {
+    fn travel(
+        manifold: &Vec<Vec<char>>,
+        row: usize,
+        col: usize,
+        cache: &mut HashMap<(usize, usize), i64>,
+    ) -> i64 {
+        if row == manifold.len() {
+            return 1;
+        }
+
+        if let Some(&result) = cache.get(&(row, col)) {
+            return result;
+        }
+
+        let cell = manifold[row][col];
+        let result = if cell == '^' {
+            let left = if col > 0 {
+                travel(manifold, row + 1, col - 1, cache)
+            } else {
+                0
+            };
+            let right = if col < manifold[row].len() - 1 {
+                travel(manifold, row + 1, col + 1, cache)
+            } else {
+                0
+            };
+            left + right
+        } else {
+            travel(manifold, row + 1, col, cache)
+        };
+
+        cache.insert((row, col), result);
+        result
+    }
+
+    let manifold: Vec<Vec<char>> = input.lines().map(|line| line.chars().collect()).collect();
+    let start = manifold[0].iter().position(|&ch| ch == 'S').unwrap();
+
+    let mut cache = HashMap::new();
+    travel(&manifold, 1, start, &mut cache)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_part01() {
-        let input = "
+    fn input() -> &'static str {
+        "
 .......S.......
 ...............
 .......^.......
@@ -63,13 +101,16 @@ mod tests {
 ...............
 .^.^.^.^.^...^.
 ...............
-";
-        assert_eq!(21, part01(input.trim()));
+"
+    }
+
+    #[test]
+    fn test_part01() {
+        assert_eq!(21, part01(input().trim()));
     }
 
     #[test]
     fn test_part02() {
-        let input = "part02";
-        assert_eq!(1, part02(input.trim()));
+        assert_eq!(40, part02(input().trim()));
     }
 }
