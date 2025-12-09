@@ -1,5 +1,8 @@
 #![allow(dead_code)]
-use std::{collections::HashMap, str::FromStr};
+use std::{
+    collections::{HashMap, HashSet},
+    str::FromStr,
+};
 
 use itertools::Itertools;
 
@@ -69,7 +72,32 @@ pub fn part01(input: &str, count: usize) -> i64 {
 }
 
 pub fn part02(input: &str) -> i64 {
-    input.lines().count().try_into().unwrap()
+    let points: Vec<Point> = input.lines().map(|line| line.parse().unwrap()).collect();
+
+    let mut distances: Vec<(usize, usize, Point, Point, i64)> = vec![];
+    for i in 0..points.len() - 1 {
+        for j in i + 1..points.len() {
+            distances.push((i, j, points[i], points[j], points[i].distance(points[j])));
+        }
+    }
+
+    distances.sort_by_key(|dst| dst.4);
+
+    let mut parents: Vec<usize> = { 0..points.len() }.collect();
+
+    for (i, j, p1, p2, _) in distances {
+        union(&mut parents, i, j);
+
+        let set: HashSet<usize> = { 0..parents.len() - 1 }
+            .map(|p| find(&mut parents, p))
+            .collect();
+
+        if set.len() == 1 {
+            return p1.0 * p2.0;
+        }
+    }
+
+    5 // Whatever!
 }
 
 #[cfg(test)]
@@ -108,6 +136,6 @@ mod tests {
 
     #[test]
     fn test_part02() {
-        assert_eq!(1, part02(input().trim()));
+        assert_eq!(25272, part02(input().trim()));
     }
 }
