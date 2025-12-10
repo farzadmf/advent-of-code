@@ -53,6 +53,39 @@ fn connect(grid: &mut [Vec<char>], t1: Tile, t2: Tile) {
     }
 }
 
+fn mark_outside(grid: &mut [Vec<char>]) {
+    let dirs: [(i32, i32); 4] = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+    let mut stack = vec![(0, 0)];
+    while let Some((x, y)) = stack.pop() {
+        grid[x][y] = 'O';
+
+        for (dx, dy) in dirs {
+            let (nx, ny) = (x as i32 + dx, y as i32 + dy);
+
+            if nx >= 0
+                && nx < grid.len() as i32
+                && ny >= 0
+                && ny < grid[0].len() as i32
+                && grid[nx as usize][ny as usize] == '.'
+            {
+                stack.push((nx as usize, ny as usize));
+            }
+        }
+    }
+}
+
+fn mark_greens(grid: &mut [Vec<char>]) {
+    for x in 0..grid.len() {
+        for y in 0..grid[0].len() {
+            if grid[x][y] == '.' {
+                grid[x][y] = 'X';
+            } else if grid[x][y] == 'O' {
+                grid[x][y] = '.';
+            }
+        }
+    }
+}
+
 pub fn part02(input: &str) -> i32 {
     let tiles: Vec<Tile> = input.lines().map(|l| l.parse().unwrap()).collect();
 
@@ -71,6 +104,9 @@ pub fn part02(input: &str) -> i32 {
         connect(&mut grid, cur, next);
     }
     connect(&mut grid, tiles[tiles.len() - 1], tiles[0]);
+
+    mark_outside(&mut grid);
+    mark_greens(&mut grid);
 
     for row in grid {
         println!("{}", row.iter().collect::<String>());
