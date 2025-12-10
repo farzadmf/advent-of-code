@@ -40,8 +40,45 @@ pub fn part01(input: &str) -> i64 {
     max_area
 }
 
+fn connect(grid: &mut [Vec<char>], t1: Tile, t2: Tile) {
+    if t1.0 == t2.0 {
+        (t1.1.min(t2.1) + 1..t1.1.max(t2.1)).for_each(|x| {
+            grid[x as usize][t1.0 as usize] = 'X';
+        });
+    }
+    if t1.1 == t2.1 {
+        (t1.0.min(t2.0) + 1..t1.0.max(t2.0)).for_each(|y| {
+            grid[t1.1 as usize][y as usize] = 'X';
+        });
+    }
+}
+
 pub fn part02(input: &str) -> i32 {
-    input.lines().count().try_into().unwrap()
+    let tiles: Vec<Tile> = input.lines().map(|l| l.parse().unwrap()).collect();
+
+    let (max_x, max_y) = tiles
+        .iter()
+        .fold((0, 0), |acc, &t| (acc.0.max(t.0), acc.1.max(t.1)));
+
+    let mut grid = vec![vec!['.'; max_x as usize + 3]; max_y as usize + 2];
+    for i in 0..tiles.len() - 1 {
+        let cur = tiles[i];
+        let next = tiles[i + 1];
+
+        grid[cur.1 as usize][cur.0 as usize] = '#';
+        grid[next.1 as usize][next.0 as usize] = '#';
+
+        connect(&mut grid, cur, next);
+    }
+    connect(&mut grid, tiles[tiles.len() - 1], tiles[0]);
+
+    for row in grid {
+        println!("{}", row.iter().collect::<String>());
+    }
+
+    dbg!(max_x, max_y);
+
+    5
 }
 
 #[cfg(test)]
@@ -68,6 +105,6 @@ mod tests {
 
     #[test]
     fn test_part02() {
-        assert_eq!(1, part02(input().trim()));
+        assert_eq!(24, part02(input().trim()));
     }
 }
