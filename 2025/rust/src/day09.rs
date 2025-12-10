@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use std::{fmt::Display, str::FromStr};
+use std::{collections::HashSet, fmt::Display, str::FromStr};
 
 #[derive(Debug, Copy, Clone)]
 struct Tile(i64, i64);
@@ -13,6 +13,23 @@ impl Display for Tile {
 
 impl Tile {
     fn area(self, other: Tile) -> i64 {
+        ((self.0 - other.0).abs() + 1) * ((self.1 - other.1).abs() + 1)
+    }
+
+    fn color_area(self, other: Tile, grid: &[Vec<char>]) -> i64 {
+        let min_x = self.0.min(other.0);
+        let min_y = self.1.min(other.1);
+        let max_y = self.1.max(other.1);
+        let max_x = self.0.max(other.0);
+
+        for x in min_x..max_x + 1 {
+            for y in min_y..max_y + 1 {
+                if grid[y as usize][x as usize] == '.' {
+                    return 0;
+                }
+            }
+        }
+
         ((self.0 - other.0).abs() + 1) * ((self.1 - other.1).abs() + 1)
     }
 }
@@ -56,7 +73,13 @@ fn connect(grid: &mut [Vec<char>], t1: Tile, t2: Tile) {
 fn mark_outside(grid: &mut [Vec<char>]) {
     let dirs: [(i32, i32); 4] = [(0, 1), (0, -1), (1, 0), (-1, 0)];
     let mut stack = vec![(0, 0)];
+    let mut visited: HashSet<(usize, usize)> = HashSet::new();
     while let Some((x, y)) = stack.pop() {
+        if visited.contains(&(x, y)) || grid[x][y] != '.' {
+            continue;
+        }
+
+        visited.insert((x, y));
         grid[x][y] = 'O';
 
         for (dx, dy) in dirs {
@@ -86,13 +109,16 @@ fn mark_greens(grid: &mut [Vec<char>]) {
     }
 }
 
-pub fn part02(input: &str) -> i32 {
+pub fn part02(input: &str) -> i64 {
     let tiles: Vec<Tile> = input.lines().map(|l| l.parse().unwrap()).collect();
 
     let (max_x, max_y) = tiles
         .iter()
         .fold((0, 0), |acc, &t| (acc.0.max(t.0), acc.1.max(t.1)));
 
+    dbg!(max_x, max_y);
+
+    println!("Connecting things ...");
     let mut grid = vec![vec!['.'; max_x as usize + 3]; max_y as usize + 2];
     for i in 0..tiles.len() - 1 {
         let cur = tiles[i];
@@ -105,16 +131,24 @@ pub fn part02(input: &str) -> i32 {
     }
     connect(&mut grid, tiles[tiles.len() - 1], tiles[0]);
 
+    println!("Marking outside ...");
     mark_outside(&mut grid);
+
+    println!("Marking greens ...");
     mark_greens(&mut grid);
 
-    for row in grid {
-        println!("{}", row.iter().collect::<String>());
+    // for row in &grid {
+    //     println!("{}", row.iter().collect::<String>());
+    // }
+
+    let mut max_area = 0;
+    for i in 0..tiles.len() - 1 {
+        for j in i + 1..tiles.len() {
+            max_area = tiles[i].color_area(tiles[j], &grid).max(max_area);
+        }
     }
 
-    dbg!(max_x, max_y);
-
-    5
+    max_area
 }
 
 #[cfg(test)]
